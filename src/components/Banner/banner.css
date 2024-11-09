@@ -1,0 +1,10 @@
+.banner-bg {
+    background-image: url('../../assets/banner.jpeg');
+    background-size: auto;
+    background-position: center;
+    width: 100%;
+    background-repeat: no-repeat;
+    height: auto;
+    padding-top: 393px;
+    padding-bottom: 60px;
+}

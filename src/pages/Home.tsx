@@ -1,4 +1,4 @@
-import { Hero, Navbar } from "../components"
+import { About, Banner, Contact, Footer, Hero, Map, Navbar, PropertyListing } from "../components"
 
 
 const Home = () => {
@@ -6,6 +6,12 @@ const Home = () => {
     <div>
       <Navbar />
       <Hero />
+      <PropertyListing />
+      <About />
+      <Banner />
+      <Map />
+      <Contact />
+      <Footer />
     </div>
   )
 }
