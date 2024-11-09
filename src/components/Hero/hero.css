@@ -1,0 +1,9 @@
+.hero-bg {
+    background-image: url('../../assets/heroBg.jpeg');
+    background-size: auto;
+    background-position: center;
+    width: 100%;
+    background-repeat: no-repeat;
+    height: auto;
+    padding: 119px 0;
+}
