@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { LucideShoppingBasket, User2Icon, Menu, X } from 'lucide-react';
 import logo from '../../assets/logo.png';
 
-const Navbar = () => {
+interface INavbarProps {
+  openAuth: () => void;
+}
+
+const Navbar = ({openAuth}: INavbarProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -26,7 +30,7 @@ const Navbar = () => {
         <button className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
           <LucideShoppingBasket size={24} />
         </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
+        <button onClick={openAuth} className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
           <User2Icon size={24} />
         </button>
 
