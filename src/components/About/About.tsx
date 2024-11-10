@@ -2,7 +2,7 @@ import aboutImg from "../../assets/aboutImg.png";
 
 const About = () => {
   return (
-    <div className='w-full max-w-[1366px] py-24 mx-auto grid-cols-2 gap-4 grid'>
+    <div className='w-full max-w-[1366px] py-24 mx-auto tablet:grid-cols-2 grid-cols-1 px-5 gap-4 grid'>
         <div className='flex flex-col gap-10'>
             <h2 className='text-3xl text-[#232323]'>About Heristays shortlets in Lekki and VI Lagos:</h2>
             <div className='text-[#727272] text-lg flex flex-col gap-6'>

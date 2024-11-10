@@ -36,7 +36,7 @@ const TextInput: React.FC<CustomInputProps> = ({
             </label>
           )}
           <div
-            className={`flex w-full gap-3 text-text-color ${additionalStyle || "border "} border-text-color items-center p-3 rounded-lg ${containerClass}`}
+            className={`flex w-full gap-3 text-text-color ${additionalStyle || "border "} border-text-color items-center p-2 rounded-lg ${containerClass}`}
           >
             {icon && <div>{icon}</div>}
             <input

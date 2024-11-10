@@ -1,6 +1,25 @@
 import { Field, Form, Formik } from 'formik';
-import { Mail, Phone, Printer, Smartphone } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Mail, Phone, Printer, Smartphone, Twitter } from 'lucide-react';
 import { TextArea, TextInput } from '../Input';
+
+const socials = [
+  {
+    icon: <Facebook />,
+    url: '',
+  },
+  {
+    icon: <Twitter />,
+    url: '',
+  },
+  {
+    name: <Instagram />,
+    url: '',
+  },
+  {
+    name: <Linkedin />,
+    url: '',
+  },
+];
 
 const Contact = () => {
   const onSubmit = (values: unknown) => {
@@ -9,7 +28,7 @@ const Contact = () => {
 
   return (
     <div className="">
-      <div className="w-full max-w-[1133px] mx-auto pt-36 pb-10 grid grid-cols-[400px,1fr] gap-7">
+      <div className="w-full max-w-[1133px] mx-auto pt-36 pb-10 grid tablet:grid-cols-[400px,1fr] grid-cols-1 px-5 gap-7">
         <div className="flex flex-col gap-10">
           <h3 className="text-4xl font-bold">Contact Information</h3>
           <div className="px-2">
@@ -33,6 +52,14 @@ const Contact = () => {
               </div>
             </div>
           </div>
+          <div className='flex items-center gap-2'>
+            {socials.map((social, index) => (
+              <div key={index} className='w-[35px] h-[35px] rounded-[35px] border border-[#8A8F9A] flex items-center justify-center'>
+                {social.icon}
+              </div>
+            ))}
+            <div className='w-[35px] h-[35px] rounded-[35px] border border-[#8A8F9A] flex items-center justify-center'></div>
+          </div>
         </div>
 
         <div className="w-full">
@@ -47,8 +74,8 @@ const Contact = () => {
           >
             {() => (
               <Form className="w-full grid gap-6 text-gray-400">
-                <div className="grid gap-5">
-                  <div className="grid grid-cols-3 gap-4 w-full">
+                <div className="grid md:gap-5 gap-3">
+                  <div className="grid md:grid-cols-3 grid-cols-1 gap-4 w-full">
                     <Field
                       name="fullName"
                       placeholder="Full Name"
@@ -79,12 +106,12 @@ const Contact = () => {
                       as={TextArea}
                       customStyle="placeholder:text-black text-black opacity-60"
                       containerClass="bg-black/5 border-black/50 text-black"
-                    />
+                  />
                   
                   <div>
                     <button
                         type="submit"
-                        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                        className="mt-4 w-[225px] h-[50px] bg-[#FE6A28] text-white px-4 py-2 rounded transition"
                     >
                         Submit
                     </button>

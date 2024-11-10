@@ -1,24 +1,84 @@
-import { HouseIcon, MapPin } from 'lucide-react'
+import { HouseIcon, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
 
-const PropertyListingCard = () => {
-  return (
-    <div className="max-w-[434px] bg-white shadow-property-card rounded-md">
-        <div className="w-full h-[341px] bg-red-400"></div>
-        <div className="p-5 flex flex-col gap-4">
-            <h4>Sigmabase Apartments VI</h4>
-            <div className="flex flex-col gap-2">
-                <div className="w-full flex items-center gap-2">
-                <MapPin size={16} />
-                <p>7/9 Molade Okoya street Off Ajose Adeogun VI</p>
-                </div>
-                <div className="w-full flex items-center gap-2">
-                <HouseIcon size={16} />
-                <p>Studios and One Bedroom Apartments</p>
-                </div>
-            </div>
-        </div>
-    </div>
-  )
+interface IPropertyCard {
+  images: string[];
+  title: string;
+  address: string;
+  description: string;
+  propertyType: string;
 }
 
-export default PropertyListingCard
+const PropertyListingCard = ({
+  images,
+  title,
+  address,
+  description,
+  propertyType,
+}: IPropertyCard) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handlePrevClick = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
+  };
+
+  const handleNextClick = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  return (
+    <div
+      className="relative max-w-[434px] w-full mx-auto bg-white shadow-property-card rounded-md overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="relative w-full h-[341px] flex items-center justify-between">
+        <img
+          src={images[currentImageIndex]}
+          alt={`Property ${currentImageIndex + 1}`}
+          className="object-cover w-full h-full"
+        />
+
+        <button
+          onClick={handlePrevClick}
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <button
+          onClick={handleNextClick}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-md"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      <div className="p-5 flex flex-col gap-4">
+        <h4 className="font-semibold text-lg">{title}</h4>
+        <div className="flex flex-col gap-2 text-sm text-[#6A6A6A]">
+          <div className="flex items-center gap-2">
+            <MapPin size={16} />
+            <p>{address}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <HouseIcon size={16} />
+            <p>{propertyType}</p>
+          </div>
+        </div>
+      </div>
+
+      {isHovered && (
+        <div className="absolute bottom-0 left-0 right-0 bg-white p-4 border-t shadow-md transition-transform duration-300 ease-in-out transform translate-y-0">
+          <p className="text-sm text-[#222222]">{description}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PropertyListingCard;
