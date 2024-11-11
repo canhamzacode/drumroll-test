@@ -1,16 +1,27 @@
 import { Field, Form, Formik } from 'formik';
-import React from 'react'
 import { TextInput } from '../Input';
+import { SignupSchema } from '../../utils/schema';
+import { useAuthState } from '../../context';
+import { ISignUpInput } from '../../types';
+
+
 
 const Signup = () => {
+    const {signup} = useAuthState();
+
+    const handleSubmit = (values: ISignUpInput) => {
+        signup(values);
+        // clear form
+
+    }
   return (
     <Formik 
-        initialValues={{ email: "", password: "", username: "", fullName: "", policy: false }}
-        onSubmit={(values) => {
-        console.log(values);
-        }}
+        initialValues={{ email: "", password: "", username: "", fullname: ""}}
+        onSubmit={(values) => handleSubmit(values)}
+        validationSchema={SignupSchema}
     >
-        {({setFieldValue})=>{
+        {({setFieldValue, errors})=>{
+            console.log(errors) 
         return (
             <Form className=''>
             <h3 className="text-2xl mb-5">Create an account</h3>
@@ -23,7 +34,7 @@ const Signup = () => {
                     containerClass="bg-black/5 border-black/50 text-black"
                 />
                 <Field
-                    name="fullName"
+                    name="fullname"
                     placeholder="Full Name"
                     as={TextInput}
                     customStyle="placeholder:text-black text-black opacity-60"
@@ -45,7 +56,7 @@ const Signup = () => {
                 customStyle="placeholder:text-black text-black opacity-60"
                 containerClass="bg-black/5 border-black/50 text-black"
                 />
-                <button className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] rounded-2xl text-white">
+                <button type='submit' className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] rounded-2xl text-white">
                 Register
                 </button>
                 <div className="flex gap-2 items-center">

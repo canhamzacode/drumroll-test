@@ -32,26 +32,14 @@ const ProductDetail = () => {
         <p>0 reviews</p>
       </div>
 
-      <div className="h-[746px] sm:h-[500px] grid grid-cols-2 sm:grid-cols-1 grid-rows-2 gap-6 relative">
-        <img
-            src="https://images.pexels.com/photos/29139391/pexels-photo-29139391/free-photo-of-dome-of-palacio-de-bellas-artes-in-mexico-city.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
-            alt="Main view"
-            className="w-full h-full row-span-2 bg-red-400 object-cover"
-        />
-        <img
-            src="https://images.pexels.com/photos/29127727/pexels-photo-29127727/free-photo-of-adorable-shih-tzu-puppy-playing-with-toy.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
-            alt="Additional view 1"
-            className="w-full h-full object-cover"
-        />
-        <img
-            src="https://images.pexels.com/photos/29127727/pexels-photo-29127727/free-photo-of-adorable-shih-tzu-puppy-playing-with-toy.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
-            alt="Additional view 2"
-            className="w-full h-full object-cover"
-        />
-        <div className="w-[42px] h-[42px] bg-[#EF5E17] border-2 border-white absolute right-4 bottom-4 flex items-center justify-center text-white rounded-full cursor-pointer">
+      <div className="h-[746px] grid grid-cols-2 grid-rows-2 gap-6 relative">
+        <img src="https://images.pexels.com/photos/29139391/pexels-photo-29139391/free-photo-of-dome-of-palacio-de-bellas-artes-in-mexico-city.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" alt="Main view" className="w-full h-full row-span-2 bg-red-400" />
+        <img src="https://images.pexels.com/photos/29127727/pexels-photo-29127727/free-photo-of-adorable-shih-tzu-puppy-playing-with-toy.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" alt="Additional view 1" className="w-full h-full" />
+        <img src="https://images.pexels.com/photos/29127727/pexels-photo-29127727/free-photo-of-adorable-shih-tzu-puppy-playing-with-toy.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" alt="Additional view 2" className="w-full h-full" />
+        <div className="w-[42px] h-[42px] bg-[#EF5E17] border-2 border-white absolute right-4 flex items-center justify-center text-white rounded-[50%] cursor-pointer bottom-4">
             +5
         </div>
-    </div>
+      </div>
 
       <div className="flex justify-between gap-3 mt-4">
         <h4 className="text-2xl font-semibold">Listing Details</h4>
