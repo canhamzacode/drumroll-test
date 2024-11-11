@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children }: IProps) => {
         return <Navigate to='/' />;
     }
 
-    if (user.role !== 'admin') {
+    if (user && user.role !== 'admin') {
         return <Navigate to='/' />;
     }
     return children;
