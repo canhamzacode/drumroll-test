@@ -1,17 +1,31 @@
 import { Route, Routes } from "react-router-dom";
-import { Home } from "./pages";
+import { Home, ProductDetail } from "./pages";
+import { ModalProvider } from "./context";
+import { AppLayout } from "./components/Layout";
 
 function App() {
 
   return (
-    <Routes>
-        <Route
-          path='/'
-          element={
-            <Home />
-          }
-        />
-    </Routes>
+    <ModalProvider>
+      <Routes>
+          <Route
+            path='/'
+            element={
+              <AppLayout>
+                <Home />
+              </AppLayout>
+            }
+          />
+          <Route
+            path='/:id'
+            element={
+              <AppLayout>
+                <ProductDetail />
+              </AppLayout>
+            }
+          />
+      </Routes>
+    </ModalProvider>
   )
 }
 

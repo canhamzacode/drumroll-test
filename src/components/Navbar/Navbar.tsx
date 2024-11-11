@@ -14,7 +14,7 @@ const Navbar = ({openAuth}: INavbarProps) => {
   };
 
   return (
-    <div className='w-full max-w-[1366px] px-5 mx-auto h-[91px] flex items-center justify-between'>
+    <div className='w-full max-w-[1366px] tablet:px-0 px-5 mx-auto h-[91px] flex items-center justify-between'>
       <div className='md:h-[58px] md:w-[201px] h-[26px] w-[100px]'>
         <img src={logo} alt="logo" />
       </div>

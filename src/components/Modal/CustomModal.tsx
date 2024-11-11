@@ -51,7 +51,7 @@ const CustomModal = ({
   }
 
   return (
-    <div className={`fixed z-50 bg-black bg-opacity-50 ${placementClass} ${modalClassName}`}>
+    <div className={`fixed z-50 bg-black bg-opacity-50 ${placementClass} ${modalClassName} px-5`}>
       <div
         className="bg-white rounded-lg shadow-lg relative"
         style={{ width: width, maxHeight: "100vh" }}
