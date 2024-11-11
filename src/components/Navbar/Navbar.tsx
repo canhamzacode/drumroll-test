@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { LucideShoppingBasket, User2Icon, Menu, X } from 'lucide-react';
 import logo from '../../assets/logo.png';
+import { Link } from 'react-router-dom';
+import { useAuthState } from '../../context';
 
 interface INavbarProps {
   openAuth: () => void;
@@ -8,6 +10,7 @@ interface INavbarProps {
 
 const Navbar = ({openAuth}: INavbarProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const {user} = useAuthState();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -23,6 +26,9 @@ const Navbar = ({openAuth}: INavbarProps) => {
         <button className="w-[106px] font-bold text-[#3B71FE]">Home</button>
         <button className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">About</button>
         <button className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">Contact</button>
+        {user?.role === "admin" && (
+          <Link to="/dashboard" className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">Dashboard</Link>
+        )}
       </div>
 
       <div className="flex gap-6 items-center">

@@ -2,7 +2,7 @@ import { createContext, useContext, useState, ReactNode, Dispatch, SetStateActio
 
 interface ModalState {
   show: boolean;
-  type?: "Auth";
+  type?: "Auth" | "Profile";
   data?: [];
 }
 

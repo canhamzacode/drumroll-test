@@ -4,15 +4,16 @@ import { SignupSchema } from '../../utils/schema';
 import { useAuthState } from '../../context';
 import { ISignUpInput } from '../../types';
 
+interface ISignupProps {
+    closeModal: () => void;
+}
 
-
-const Signup = () => {
+const Signup = ({closeModal}: ISignupProps) => {
     const {signup} = useAuthState();
 
     const handleSubmit = (values: ISignUpInput) => {
         signup(values);
-        // clear form
-
+        closeModal()
     }
   return (
     <Formik 
