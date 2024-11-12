@@ -1,8 +1,11 @@
 import { HouseIcon, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { IImage } from '../../types';
+import { Link } from 'react-router-dom';
 
 interface IPropertyCard {
-  images: string[];
+  images: IImage[];
+  id: string;
   title: string;
   address: string;
   description: string;
@@ -15,6 +18,7 @@ const PropertyListingCard = ({
   address,
   description,
   propertyType,
+  id
 }: IPropertyCard) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -39,7 +43,7 @@ const PropertyListingCard = ({
     >
       <div className="relative w-full h-[341px] flex items-center justify-between">
         <img
-          src={images[currentImageIndex]}
+          src={images[currentImageIndex].secure_url}
           alt={`Property ${currentImageIndex + 1}`}
           className="object-cover w-full h-full"
         />
@@ -59,7 +63,7 @@ const PropertyListingCard = ({
       </div>
 
       <div className="p-5 flex flex-col gap-4">
-        <h4 className="font-semibold text-lg">{title}</h4>
+        <Link to={`/property/${id}`} className="font-semibold text-lg">{title}</Link>
         <div className="flex flex-col gap-2 text-sm text-[#6A6A6A]">
           <div className="flex items-center gap-2">
             <MapPin size={16} />

@@ -1,29 +1,7 @@
 import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PropertyListingCard } from "../PropertyListingCard";
-
-const propertyData = [
-  {
-    images: [
-      "https://images.pexels.com/photos/28169367/pexels-photo-28169367/free-photo-of-black-model-in-yellow-drapes.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-      "https://images.pexels.com/photos/29284806/pexels-photo-29284806/free-photo-of-traditional-colombian-fruit-vendor-in-vibrant-dress.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-    ],
-    title: "Sigmabase Apartments VI",
-    address: "7/9 Molade Okoya street Off Ajose Adeogun VI",
-    description: "Additional details about the property, such as amenities, special offers, or booking options.",
-    propertyType: "Studios and One Bedroom Apartments",
-  },
-  {
-    images: [
-      "https://images.pexels.com/photos/28988215/pexels-photo-28988215/free-photo-of-surfer-at-sunset-on-ipanema-beach-rio-de-janeiro.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-      "https://images.pexels.com/photos/29284806/pexels-photo-29284806/free-photo-of-traditional-colombian-fruit-vendor-in-vibrant-dress.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-    ],
-    title: "Beachfront Villas, Lekki",
-    address: "123 Lekki Expressway, Lekki Phase 1",
-    description: "Luxury beachfront villas with scenic views and private pools.",
-    propertyType: "2 Bedroom Villas",
-  },
-];
+import { usePropertyState } from "../../context";
 
 interface IFilterSectionProps {
   title: string;
@@ -53,6 +31,7 @@ interface Filters {
 }
 
 const PropertyListing = () => {
+  const {properties, getAllProperties, loading} = usePropertyState();
   const [filters, setFilters] = useState<Filters>({
     where: "",
     checkIn: "",
@@ -67,6 +46,10 @@ const PropertyListing = () => {
   const handleSearchClick = () => {
     console.log(filters); // Logs the filter values as an object
   };
+
+  useEffect(()=> {
+    getAllProperties();
+  },[])
 
   return (
     <div className="bg-[#F7F8FA]">
@@ -124,16 +107,18 @@ const PropertyListing = () => {
         </div>
         
         <div className="mt-4 grid tablet:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-5">
-        {propertyData.map((property, index) => (
-          <PropertyListingCard
-            key={index}
-            images={property.images}
-            title={property.title}
-            address={property.address}
-            description={property.description}
-            propertyType={property.propertyType}
-          />
-        ))}
+          {loading && <p>Loading...</p>}
+          {properties.map((property, index) => (
+            <PropertyListingCard
+              key={index}
+              id={property._id}
+              images={property.images}
+              title={property.title}
+              address={property.location}
+              description={property.description}
+              propertyType={property.propertyType}
+            />
+          ))}
         </div>
       </div>
     </div>

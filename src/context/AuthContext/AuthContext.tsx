@@ -24,116 +24,117 @@ interface IProps {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuthState = () => {
-    const state = useContext(AuthContext);
-    if (!state) {
-        throw new Error("AuthContext not found");
-    }
-    return state;
+  const state = useContext(AuthContext);
+  if (!state) {
+    throw new Error("AuthContext not found");
+  }
+  return state;
 };
 
-const baseURL = import.meta.env.VITE_BASE_URL;
+// Set the base URL for all Axios requests
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const AuthContextProvider = ({ children }: IProps) => {
-    const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(false);
-    const [user, setUser] = useState<IUser | null>(null);
-    const [token, setToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(false);
+  const [user, setUser] = useState<IUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const signup = async (data: ISignUpInput) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const res = await axios.post(`${baseURL}/auth/register`, data);
-            setToken(res.data.data.token);
-            setUser(res.data.data.user);
-            setIsAuthenticated(true);
-            localStorage.setItem("token", res.data.data.token);
-            Toast("success", res.data.msg);
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Signup failed");
-            Toast("error", err.response?.data?.message || "Signup failed");
-        } finally {
-            setLoading(false);
-        }
-    };
+  const signup = async (data: ISignUpInput) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.post("/auth/register", data);
+      setToken(res.data.data.token);
+      setUser(res.data.data.user);
+      setIsAuthenticated(true);
+      localStorage.setItem("token", res.data.data.token);
+      Toast("success", res.data.msg);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Signup failed");
+      Toast("error", err.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const signin = async (data: ILoginInput) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const res = await axios.post(`${baseURL}/auth/login`, data);
-            setToken(res.data.data.token);
-            setUser(res.data.data.user);
-            setIsAuthenticated(true);
-            localStorage.setItem("token", res.data.data.token);
-            Toast("success", res.data.msg);
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Login failed");
-            Toast("error", err.response?.data?.message || "Login failed");
-        } finally {
-            setLoading(false);
-        }
-    };
+  const signin = async (data: ILoginInput) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.post("/auth/login", data);
+      setToken(res.data.data.token);
+      setUser(res.data.data.user);
+      setIsAuthenticated(true);
+      localStorage.setItem("token", res.data.data.token);
+      Toast("success", res.data.msg);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Login failed");
+      Toast("error", err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const checkAuth = async (authToken: string | null) => {
-        setError(null);
-        setIsCheckingAuth(true);
-        try {
-            const res = await axios.get(`${baseURL}/auth/user`, 
-                { headers: 
-                    {"heri-auth-token": authToken}
-                }
-            );
-            setUser(res.data.data.user);
-            setIsAuthenticated(true);
-            setIsCheckingAuth(false);
-        } catch (err: any) {
-            console.log(err);
-            setError(null);
-            setIsAuthenticated(false);
-            // localStorage.removeItem("token");
-        } finally {
-            setLoading(false);
-            setIsCheckingAuth(false);
-        }
-    };
+  const checkAuth = async (authToken: string | null) => {
+    setError(null);
+    setIsCheckingAuth(true);
+    try {
+      const res = await axios.get("/auth/user", {
+        headers: {
+          "heri-auth-token": authToken,
+        },
+      });
+      setUser(res.data.data.user);
+      setIsAuthenticated(true);
+    } catch (err: any) {
+      console.log(err);
+      setError(null);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+      setIsCheckingAuth(false);
+    }
+  };
 
-    const logout = () => {
-        setUser(null);
-        setToken(null);
-        setIsAuthenticated(false);
-        localStorage.removeItem("token");
-        Toast("success", "Logged out successfully");
-    };
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem("token");
+    Toast("success", "Logged out successfully");
+  };
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
-            setToken(storedToken);
-            checkAuth(storedToken);
-        } else {
-            setLoading(false);
-        }
-    }, []);
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      checkAuth(storedToken);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{
-            user,
-            token,
-            isAuthenticated,
-            loading,
-            error,
-            signup,
-            signin,
-            checkAuth,
-            logout,
-            isCheckingAuth
-        }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated,
+        loading,
+        error,
+        signup,
+        signin,
+        checkAuth,
+        logout,
+        isCheckingAuth,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthContextProvider;
