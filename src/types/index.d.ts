@@ -74,3 +74,18 @@ export interface IProperty {
     bookings: [];
 }
   
+
+export interface ICreatePropertyInput {
+    title: string;                // Title of the property
+    description: string;          // Description of the property
+    price: number;                // Price of the property (changed to number)
+    location: string;             // Location of the property
+    images: File[];               // Array of files for image uploads
+    propertyType: string;         // Type of the property
+    guestCapacity: number;        // Guest capacity (changed to number)
+    bedrooms: number;             // Number of bedrooms (changed to number)
+    privateBed: number;           // Number of private beds (changed to number)
+    minimumNights: number;         // Minimum nights required (changed to number)
+    maximumNights: number;         // Maximum nights allowed (changed to number)
+    amenities: string;            // Single string for amenities, comma-separated
+}

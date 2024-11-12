@@ -12,6 +12,11 @@ const Navbar = ({openAuth}: INavbarProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const {user} = useAuthState();
 
+  const openProfile = () => {
+    openAuth();
+    console.log('Open Profile');
+  }
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -36,7 +41,7 @@ const Navbar = ({openAuth}: INavbarProps) => {
         <button className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
           <LucideShoppingBasket size={24} />
         </button>
-        <button onClick={openAuth} className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
+        <button onClick={openProfile} className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
           <User2Icon size={24} />
         </button>
 

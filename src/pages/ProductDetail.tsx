@@ -8,7 +8,7 @@ import { MdKitchen } from "react-icons/md";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { getSingleProperty, loading, property } = usePropertyState();
+  const { getSingleProperty, loading, property, initializePayment, initializingPayment } = usePropertyState();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -136,7 +136,11 @@ const ProductDetail = () => {
                 </div>
               ))}
             </div>
-            <button className="w-full h-[44px] bg-[#EF5E17] text-white">Request to Book</button>
+            <button disabled={initializingPayment} type="button" onClick={()=>{
+              initializePayment(total, property)
+            }} className="w-full h-[44px] bg-[#EF5E17] text-white">
+              {initializingPayment ? "Requesting to Book...": "Request to Book"}
+            </button>
           </div>
         </div>
       </div>
