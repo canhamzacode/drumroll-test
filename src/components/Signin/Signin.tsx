@@ -9,12 +9,14 @@ interface ISignInProps {
 }
 
 const Signin = ({closeModal}: ISignInProps) => {
-    const {signin, loading, user} = useAuthState()
+    const {signin, loading} = useAuthState()
     const handleSubmit = (values: ILoginInput) => {
-        signin(values)
-        if (user) {
+        signin(values).then(()=>{
             closeModal();
-        }
+        });
+        // if (user) {
+        //     closeModal();
+        // }
     }
   return (
     <Formik 

@@ -2,6 +2,7 @@ import { SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PropertyListingCard } from "../PropertyListingCard";
 import { usePropertyState } from "../../context"
+import { Toast } from "../Toast";
 
 interface IFilterSectionProps {
   title: string;
@@ -32,7 +33,7 @@ interface IFilter {
 }
 
 const PropertyListing = () => {
-  const { properties, getAllProperties, loading } = usePropertyState();
+  const { properties, getAllProperties, loading, searchProperties } = usePropertyState();
   const [filters, setFilters] = useState<IFilter>({
     location: "",
     checkin: "",
@@ -44,13 +45,14 @@ const PropertyListing = () => {
     setFilters((prevFilters) => ({ ...prevFilters, [field]: value }));
   };
 
-  const handleSearchClick = () => {
-    console.log(filters);
-  };
 
-  useEffect(() => {
-    // searchProperties(filters); search
-  }, [filters]);
+  const handleSearch = () => {
+    if (!filters.location || !filters.checkin || !filters.checkout || !filters.guests) {
+      Toast("error", "Please fill all fields");
+      return;
+    }
+    searchProperties(filters);
+  }
 
   useEffect(() => {
     getAllProperties();
@@ -96,7 +98,7 @@ const PropertyListing = () => {
                   />
                 </div>
                 <button
-                  onClick={handleSearchClick}
+                  onClick={handleSearch}
                   className="w-[42px] h-[42px] rounded-full bg-[#FE6A00] text-white flex items-center justify-center"
                 >
                   <SearchIcon size={20} />

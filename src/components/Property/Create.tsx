@@ -137,7 +137,7 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
                             <Field
                                 name="location"
                                 placeholder="Location"
-                                label="Location" // Fixed typo from "lael" to "label"
+                                label="Location"
                                 as={TextInput}
                                 customStyle="placeholder:text-black text-black opacity-60"
                                 containerClass="bg-black/5 border-black/50 text-black"

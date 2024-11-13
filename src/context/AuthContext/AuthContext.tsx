@@ -15,6 +15,7 @@ export type AuthContextType = {
   signin: (data: ILoginInput) => Promise<void>;
   checkAuth: (authToken: string | null) => Promise<void>;
   logout: () => void;
+  googleAuth: () => void;
 };
 
 interface IProps {
@@ -35,7 +36,7 @@ export const useAuthState = () => {
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const AuthContextProvider = ({ children }: IProps) => {
-  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const [user, setUser] = useState<IUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -90,14 +91,23 @@ const AuthContextProvider = ({ children }: IProps) => {
       setUser(res.data.data.user);
       setIsAuthenticated(true);
     } catch (err: any) {
-      console.log(err);
-      setError(null);
+      console.error("Auth check failed:", err);
       setIsAuthenticated(false);
+      setError("Failed to authenticate. Please log in again.");
     } finally {
       setLoading(false);
       setIsCheckingAuth(false);
     }
   };
+
+  const googleAuth = async () => {
+    try {
+      // const res = await axios.get("auth/google");
+      window.open(`${import.meta.env.BASE_URL}/google/callback`)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const logout = () => {
     setUser(null);
@@ -113,7 +123,7 @@ const AuthContextProvider = ({ children }: IProps) => {
       setToken(storedToken);
       checkAuth(storedToken);
     } else {
-      setLoading(false);
+      setIsCheckingAuth(false);
     }
   }, []);
 
@@ -130,6 +140,7 @@ const AuthContextProvider = ({ children }: IProps) => {
         checkAuth,
         logout,
         isCheckingAuth,
+        googleAuth
       }}
     >
       {children}

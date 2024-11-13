@@ -1,14 +1,24 @@
 import { About, Banner, Hero, Map, PropertyListing } from "../components";
+import { useSection } from '../context/SectionContext';
 
 const Home = () => {
+  const { aboutRef, contactRef } = useSection();
 
   return (
     <div>
-      <Hero />
+      {/* <button onClick={() => scrollToSection("aboutRef")}>Go to About</button>
+      <button onClick={() => scrollToSection("contactRef")}>Go to Contact</button> */}
+      <div>
+        <Hero />
+      </div>
       <PropertyListing />
-      <About />
+      <section ref={aboutRef}>
+        <About />
+      </section>
       <Banner />
-      <Map />
+      <section ref={contactRef}>
+        <Map />
+      </section>
     </div>
   );
 };

@@ -6,12 +6,12 @@ interface IProps {
   }
   
 const ProtectedRoute = ({ children }: IProps) => {
-    const { isAuthenticated, user } = useAuthState();
+    const { isAuthenticated, user, isCheckingAuth } = useAuthState();
     if (!isAuthenticated) {
         return <Navigate to='/' />;
     }
 
-    if (user && user.role !== 'admin') {
+    if (!isCheckingAuth && user && user.role !== 'admin') {
         return <Navigate to='/' />;
     }
     return children;
