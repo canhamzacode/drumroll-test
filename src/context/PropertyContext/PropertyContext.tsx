@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { IProperty, IPropertyFilter } from "../../types";
+import { IProperty, IPropertyFilter, IPropertySummary } from "../../types";
 import axios from "axios";
 import { Toast } from "../../components/Toast";
 import { useAuthState } from "../AuthContext";
@@ -16,6 +16,8 @@ interface IPropertyContext {
     deleteProperty: (id: string) => Promise<void>;
     editProperty: (id: string, data: FormData)  => Promise<void>;
     searchProperties: (data: IPropertyFilter) => Promise<void>;
+    getAllSummary: () => Promise<void>;
+    summary: IPropertySummary | null;
 }
 
 interface IProps {
@@ -32,12 +34,14 @@ export const usePropertyState = () => {
     return state;
 }
 
+
 const PropertyContextProvider = ({ children }: IProps) => {
     const {token} = useAuthState();
     const [loading, setLoading] = useState(false);
     const [properties, setProperties] = useState<IProperty []>([]);
     const [property, setProperty] = useState<IProperty | null>(null);
-    const [initializingPayment, setInitializingPayment] = useState(false)
+    const [initializingPayment, setInitializingPayment] = useState(false);
+    const [summary, setSummary] = useState<IPropertySummary | null>(null);
 
     const getAllProperties = async () =>{
         setLoading(true);
@@ -90,6 +94,23 @@ const PropertyContextProvider = ({ children }: IProps) => {
         }
     }
     
+    const getAllSummary = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get("/property/dashboard/summary", {
+                headers: {
+                    "heri-auth-token": token,
+                },
+            });
+            setSummary(res.data.data);
+            console.log(res.data.data);
+        } catch (error) {
+            console.log(error);
+            Toast("error", "Failed to fetch properties");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const initializePayment = async (charge: number, booking: IProperty) => {
         setInitializingPayment(true);
@@ -138,7 +159,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
         console.log(token);
         setLoading(true);
         try {
-            const res = await axios.post(`/property/update/one/${id}`, data, {
+            const res = await axios.put(`/property/update/one/${id}`, data, {
                 headers: {
                     "heri-auth-token": token,
                     "Content-Type": "multipart/form-data",
@@ -157,7 +178,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
     const deleteProperty = async (id: string) => {
         setLoading(true);
         try {
-            const res = await axios.post(`/property/delete/one/${id}`, {
+            const res = await axios.delete(`/property/delete/one/${id}`, {
                 headers: {
                     "heri-auth-token": token,
                     "Content-Type": "multipart/form-data",
@@ -185,7 +206,9 @@ const PropertyContextProvider = ({ children }: IProps) => {
             initializePayment,
             editProperty,
             deleteProperty,
-            searchProperties
+            searchProperties,
+            getAllSummary,
+            summary
         }}>
             {children}
         </PropertyContext.Provider>

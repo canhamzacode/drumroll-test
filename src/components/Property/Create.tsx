@@ -16,18 +16,27 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const [lastCheckin, setLastCheckin] = useState<string | null>(null);
     const [lastCheckout, setLastCheckout] = useState<string | null>(null);
+    const [existingImages, setExistingImages] = useState<string[]>([]);
 
     console.log(data)
     useEffect(() => {
-        const bookingLength = data?.bookings?.length || 0;
-        if (bookingLength > 0) {
-            setLastCheckin(data?.bookings[bookingLength - 1].checkin || null);
-            setLastCheckout(data?.bookings[bookingLength - 1].checkout || null); 
-        } else {
-            setLastCheckin(null);
-            setLastCheckout(null);
+        if (data) {
+            // Set initial values for dates
+            const bookingLength = data.bookings?.length || 0;
+            if (bookingLength > 0) {
+                setLastCheckin(data.bookings[bookingLength - 1].checkin ? formatDateForInput(data.bookings[bookingLength - 1].checkin) : null);
+                setLastCheckout(data.bookings[bookingLength - 1].checkout ? formatDateForInput(data.bookings[bookingLength - 1].checkout) : null);
+            }
+
+            setExistingImages(data.images.map((data)=> data.secure_url) || []);
         }
-    }, [data]); 
+    }, [data]);
+
+    const formatDateForInput = (dateString: string | null) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+    };
 
     const handleSubmit = async (values: ICreatePropertyInput) => {
         console.log("Form Values:", values);
@@ -136,7 +145,7 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
                             <div>
                                 Images
                             </div>
-                            <input
+                            {!data && <input
                                 type="file"
                                 name="images"
                                 multiple
@@ -148,7 +157,14 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
                                         setFieldValue("images", newImages);
                                     }
                                 }}
-                            />
+                            />}
+                            <div className="image-preview flex gap-3">
+                                {existingImages.map((image, index) => (
+                                    <div key={index} className="">
+                                        <img src={image} alt={`Selected ${index}`} className="w-[60px] h-[60px] rounded-xl" />
+                                    </div>
+                                ))}
+                            </div>
                             <div className="image-preview flex gap-3">
                                 {selectedImages.map((image, index) => (
                                     <div key={index} className="">
@@ -187,6 +203,7 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
                                 name="bedrooms"
                                 type="number"
                                 placeholder="Bedrooms"
+                                label="Bedrooms"
                                 as={TextInput}
                                 customStyle="placeholder:text-black text-black opacity-60"
                                 containerClass="bg-black/5 border-black/50 text-black"

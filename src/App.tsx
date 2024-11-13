@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppLayout } from "./components/Layout";
 import { useAuthState } from "./context/AuthContext/AuthContext";
+import ProtectedRoute from "./routes/ProtectedRoutes";
 // import ProtectedRoute from "./routes/ProtectedRoutes";
 
 
@@ -21,8 +22,11 @@ function App() {
       <Routes>
         <Route path="/" element={<AppLayout><Home /></AppLayout>} />
         <Route path="/property/:id" element={<AppLayout><ProductDetail /></AppLayout>} />
-        {/* <Route path="/dashboard" element={<AppLayout><ProtectedRoute><div>Dashboard</div></ProtectedRoute></AppLayout>} /> */}
-        <Route path="/dashboard/*" element={<AppLayout><Dashboard /></AppLayout>} />
+        <Route path="/dashboard/*" element={<AppLayout>
+          <ProtectedRoute>
+          <Dashboard />
+          </ProtectedRoute>
+        </AppLayout>} />
       </Routes>
     </>
   )

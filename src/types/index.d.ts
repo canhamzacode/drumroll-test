@@ -104,3 +104,68 @@ export interface IPropertyFilter {
     checkout: string | number;
     guests: number;
 }
+
+
+export interface IPropertySummary {
+    totalBookings: IBooking [];
+    totalProperties: number;
+    availableProperties: number;
+    revenueGenerated: number;
+}
+
+interface IBookingInfo {
+    _id: string;
+    created_by: IUser; // Reference to the user who created the booking
+    title: string;
+    description: string;
+    rating: string;
+    price: string;
+    location: string;
+    propertyType: string;
+    status: string;
+    images: IImage[]; // Array of images
+    guestCapacity: string;
+    bedrooms: string;
+    privateBed: string;
+    privateBathroom: string;
+    dedicatedBathroom: string;
+    sharedBathroom: string;
+    minimumNights: string;
+    maximumNights: string;
+    amenities: string[]; // Array of amenities
+    createdAt: string;
+    updatedAt: string;
+    __v: string;
+}
+
+interface IUserCardInfo {
+    authorization_code: string;
+    bin: string;
+    last4: string;
+    exp_month: string;
+    exp_year: string;
+    channel: string;
+    card_type: string;
+    bank: string;
+    country_code: string;
+    brand: string;
+    reusable: boolean;
+    signature: string;
+    account_name: string | null;
+    receiver_bank_account_number: string | null;
+    receiver_bank: string | null;
+}
+
+export interface IBooking {
+    _id: string;
+    order_num: string;
+    booking_info: IBookingInfo;
+    user_obj: IUser;
+    payment_method: string;
+    user_card_info: IUserCardInfo;
+    created_by: string;
+    date: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+}

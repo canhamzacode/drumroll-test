@@ -21,10 +21,11 @@ const formatDate = (dateString: string) => {
 
 const Dashboard = () => {
     const [modal, setModal] = useState<ModalState>({ show: false, type: "createProperty" });
-    const {getAllProperties, properties, loading, deleteProperty} = usePropertyState();
+    const {loading, deleteProperty, getAllSummary, summary, getAllProperties, properties} = usePropertyState();
 
     useEffect(() => {
         getAllProperties();
+        getAllSummary();
     },[]);
 
     const closeModal = () => {
@@ -112,6 +113,7 @@ const Dashboard = () => {
             ),
         },
     ];
+
   return (
     <div className='w-full max-w-[1366px] mx-auto px-5'>
         <div className='mb-5 flex justify-between'>
@@ -125,7 +127,26 @@ const Dashboard = () => {
                 </button>
             </div>
         </div>
-        <Table columns={columns} dataSource={properties} loading={loading} />
+        <div className="grid h-full mt-3 tablet:grid-cols-3 md:grid-cols-2 gap-4 grid-cols-1">
+            <div className="w-full p-4 h-32 rounded-lg shadow-xl border flex flex-col gap-3">
+                <h4 className="text-lg font-semibold">Total Properties</h4>
+                <p className="text-4xl font-bold">{summary?.totalProperties || 0}</p>
+            </div>
+            <div className="w-full p-4 h-32 rounded-lg shadow-xl border flex flex-col gap-3">
+                <h4 className="text-lg font-semibold">Total Revenue</h4>
+                <p className="text-4xl font-bold">
+                    &#8358;{summary?.revenueGenerated?.toLocaleString() || 0}
+                </p>
+            </div>
+            <div className="w-full p-4 h-32 rounded-lg shadow-xl border flex flex-col gap-3">
+                <h4 className="text-lg font-semibold">Total Avalable Properties</h4>
+                <p className="text-4xl font-bold">{summary?.availableProperties || 0}</p>
+            </div>
+        </div>
+        {/*  */}
+        <h1 className='text-2xl font-bold mt-6'>Properties</h1>
+        <Table columns={columns} dataSource={properties} loading={loading} rowKey="_id" />
+        {/* Bookings should be displayed here also summary.booking */}
         <CustomModal 
             show={modal.show} 
             onDismiss={closeModal}
