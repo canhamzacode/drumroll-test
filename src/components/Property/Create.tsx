@@ -1,214 +1,238 @@
 import { Field, Form, Formik } from 'formik';
 import { TextInput } from '../Input';
 import { createPropertySchema } from '../../utils/schema';
-import { ICreatePropertyInput } from '../../types';
+import { ICreatePropertyInput, IProperty } from '../../types';
 import { usePropertyState } from '../../context';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
-const CreateProperty = () => {
-    const { createProperty, loading } = usePropertyState();
+interface ICreateProp {
+    data?: IProperty;
+    closeModal: () => void;
+}
+
+const CreateProperty = ({ data, closeModal }: ICreateProp) => {
+    const { createProperty, loading, editProperty } = usePropertyState();
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [lastCheckin, setLastCheckin] = useState<string | null>(null);
+    const [lastCheckout, setLastCheckout] = useState<string | null>(null);
+
+    console.log(data)
+    useEffect(() => {
+        const bookingLength = data?.bookings?.length || 0;
+        if (bookingLength > 0) {
+            setLastCheckin(data?.bookings[bookingLength - 1].checkin || null);
+            setLastCheckout(data?.bookings[bookingLength - 1].checkout || null); 
+        } else {
+            setLastCheckin(null);
+            setLastCheckout(null);
+        }
+    }, [data]); 
 
     const handleSubmit = async (values: ICreatePropertyInput) => {
-      console.log("Form Values:", values);
-  
-      const formData = new FormData();
-      Object.keys(values).forEach(key => {
-          const typedKey = key as keyof ICreatePropertyInput;
-  
-          if (typedKey === 'images') {
-              values.images.forEach((image: File) => {
-                  formData.append('images', image); // Append each image file
-              });
-          } else {
-              formData.append(typedKey, String(values[typedKey])); // Convert non-file values to string
-          }
-      });
-  
-      console.log("FormData Content:", [...formData]);
-  
-      // Ensure `createProperty` handles formData properly
-      await createProperty(formData);
-  };
+        console.log("Form Values:", values);
+
+        const formData = new FormData();
+        Object.keys(values).forEach(key => {
+            const typedKey = key as keyof ICreatePropertyInput;
+
+            if (typedKey === 'images') {
+                values.images.forEach((image: File) => {
+                    formData.append('images', image);
+                });
+            } else {
+                formData.append(typedKey, String(values[typedKey]));
+            }
+        });
+
+        console.log("FormData Content:", [...formData]);
+
+        if (data) {
+            await editProperty(data._id, formData);
+            closeModal();
+            return;
+        }
+        await createProperty(formData);
+        closeModal();
+    };
 
     return (
-        <Formik 
+        <Formik
             initialValues={{
-                title: "",
-                description: "",
-                price: 0,
-                location: "",
-                images: [] as File[],
-                propertyType: "",
-                guestCapacity: 1,
-                bedrooms: 1,
-                privateBed: 1,
-                minimumNights: 1,
-                maximumNights: 1,
-                amenities: "",
-                checkin: "",
-                checkout: "",
+                title: data?.title || "", // Use data if available
+                description: data?.description || "",
+                price: data?.price || 0,
+                location: data?.location || "",
+                images: [] as File[], // Keep this empty for new property
+                propertyType: data?.propertyType || "",
+                guestCapacity: data?.guestCapacity || 1,
+                bedrooms: data?.bedrooms || 1,
+                privateBed: data?.privateBed || 1,
+                minimumNights: data?.minimumNights || 1,
+                maximumNights: data?.maximumNights || 1,
+                amenities: data?.amenities?.join(", ")  || "",
+                checkin: lastCheckin || "",
+                checkout: lastCheckout|| "",
             }}
             onSubmit={handleSubmit}
             validationSchema={createPropertySchema}
         >
-          {({ setFieldValue, errors }) => {
-            console.log(errors)
-              return (
-                  <Form className=''>
-                      <div className="grid gap-4">
-                          <Field
-                              name="title"
-                              placeholder="Title"
-                              as={TextInput}
-                              label="Title"
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="description"
-                              placeholder="Description"
-                              label="Description"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field 
-                            name="checkin"
-                            placeholder="Check In"
-                            label="Checkin"
-                            as={TextInput}
-                            type="date"
-                            customStyle="placeholder:text-black text-black opacity-60"
-                            containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field 
-                            name="checkout"
-                            placeholder="Check Out"
-                            label="Check Out"
-                            as={TextInput}
-                            type="date"
-                            customStyle="placeholder:text-black text-black opacity-60"
-                            containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="price"
-                              type="number"
-                              label="price"
-                              placeholder="Price"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="location"
-                              placeholder="Location"
-                              lael="Location"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <div>
-                            Images
-                          </div>
-                          <input
-                              type="file"
-                              name="images"
-                              multiple
-                              onChange={(event) => {
-                                  const files = event.currentTarget.files;
-                                  if (files) {
-                                    const newImages = Array.from(files);
-                                    setSelectedImages(newImages);
-                                    setFieldValue("images", newImages);
-                                }
-                              }}
-                          />
-                          <div className="image-preview flex gap-3">
-                            {selectedImages.map((image, index) => (
-                                <div key={index} className="">
-                                    <img  src={URL.createObjectURL(image)} alt={`Selected ${index}`} className="w-[60px] h-[60px] rounded-xl" />
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const updatedImages = selectedImages.filter((_, i) => i !== index);
-                                            setSelectedImages(updatedImages);
-                                            setFieldValue("images", updatedImages);
-                                        }}
-                                    >
-                                        Remove
-                                    </button>
-                                </div>
-                            ))}
-                          </div>
-                          <Field
-                              name="propertyType"
-                              placeholder="Property Type"
-                              label="Property Type"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="guestCapacity"
-                              type="number"
-                              placeholder="Guest Capacity"
-                              label="Guest Capacity"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="bedrooms"
-                              type="number"
-                              placeholder="Bedrooms"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="privateBed"
-                              type="number"
-                              placeholder="Private Bed"
-                              label="Private Bed"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="minimumNights"
-                              type="number"
-                              placeholder="Minimum Night"
-                              label="Minimum Night"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="maximumNights"
-                              type="number"
-                              placeholder="Maximum Night"
-                              label="Maximum Night"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <Field
-                              name="amenities"
-                              placeholder="Amenities (comma separated)"
-                              label="Amenitied"
-                              as={TextInput}
-                              customStyle="placeholder:text-black text-black opacity-60"
-                              containerClass="bg-black/5 border-black/50 text-black"
-                          />
-                          <button disabled={loading} type='submit' className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] rounded-2xl text-white">
-                              {loading ? <Loader2 /> : "Create Property"}
-                          </button>
-                      </div>
-                  </Form>
-              );
-          }}
+            {({ setFieldValue, errors }) => {
+                console.log(errors);
+                return (
+                    <Form className=''>
+                        <div className="grid gap-4">
+                            <Field
+                                name="title"
+                                placeholder="Title"
+                                as={TextInput}
+                                label="Title"
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="description"
+                                placeholder="Description"
+                                label="Description"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="checkin"
+                                placeholder="Check In"
+                                label="Checkin"
+                                as={TextInput}
+                                type="date"
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="checkout"
+                                placeholder="Check Out"
+                                label="Check Out"
+                                as={TextInput}
+                                type="date"
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="price"
+                                type="number"
+                                label="Price"
+                                placeholder="Price"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="location"
+                                placeholder="Location"
+                                label="Location" // Fixed typo from "lael" to "label"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <div>
+                                Images
+                            </div>
+                            <input
+                                type="file"
+                                name="images"
+                                multiple
+                                onChange={(event) => {
+                                    const files = event.currentTarget.files;
+                                    if (files) {
+                                        const newImages = Array.from(files);
+                                        setSelectedImages(newImages);
+                                        setFieldValue("images", newImages);
+                                    }
+                                }}
+                            />
+                            <div className="image-preview flex gap-3">
+                                {selectedImages.map((image, index) => (
+                                    <div key={index} className="">
+                                        <img src={URL.createObjectURL(image)} alt={`Selected ${index}`} className="w-[60px] h-[60px] rounded-xl" />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const updatedImages = selectedImages.filter((_, i) => i !== index);
+                                                setSelectedImages(updatedImages);
+                                                setFieldValue("images", updatedImages);
+                                            }}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                            <Field
+                                name="propertyType"
+                                placeholder="Property Type"
+                                label="Property Type"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="guestCapacity"
+                                type="number"
+                                placeholder="Guest Capacity"
+                                label="Guest Capacity"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="bedrooms"
+                                type="number"
+                                placeholder="Bedrooms"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="privateBed"
+                                type="number"
+                                placeholder="Private Bed"
+                                label="Private Bed"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="minimumNights"
+                                type="number"
+                                placeholder="Minimum Night"
+                                label="Minimum Night"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="maximumNights"
+                                type="number"
+                                placeholder="Maximum Night"
+                                label="Maximum Night"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <Field
+                                name="amenities"
+                                placeholder="Amenities (comma separated)"
+                                label="Amenities" // Fixed typo from "Amenitied" to "Amenities"
+                                as={TextInput}
+                                customStyle="placeholder:text-black text-black opacity-60"
+                                containerClass="bg-black/5 border-black/50 text-black"
+                            />
+                            <button disabled={loading} type='submit' className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] rounded-2xl text-white">
+                                {loading ? <Loader2 /> : "Create Property"}
+                            </button>
+                        </div>
+                    </Form>
+                );
+            }}
         </Formik>
     );
 };

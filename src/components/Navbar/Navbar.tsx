@@ -28,9 +28,9 @@ const Navbar = ({openAuth}: INavbarProps) => {
       </div>
 
       <div className="hidden md:flex gap-2">
-        <button className="w-[106px] font-bold text-[#3B71FE]">Home</button>
-        <button className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">About</button>
-        <button className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">Contact</button>
+        <Link to="/" className="w-[106px] font-bold text-[#3B71FE]">Home</Link>
+        <Link to="/#about" className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">About</Link>
+        <Link to="/#contact" className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">Contact</Link>
         {user?.role === "admin" && (
           <Link to="/dashboard" className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">Dashboard</Link>
         )}
@@ -61,14 +61,17 @@ const Navbar = ({openAuth}: INavbarProps) => {
           </button>
         </div>
         <div className="flex flex-col items-center gap-6 mt-10 text-[#232323] font-bold">
-          <button onClick={toggleSidebar} className="hover:text-[#3B71FE]">Home</button>
-          <button onClick={toggleSidebar} className="hover:text-[#3B71FE]">About</button>
-          <button onClick={toggleSidebar} className="hover:text-[#3B71FE]">Contact</button>
+          <Link to="/" className="w-[106px] font-bold text-[#3B71FE]">Home</Link>
+          <Link to="/#about" className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">About</Link>
+          <Link to="/#contact" className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">Contact</Link>
+          {user?.role === "admin" && (
+            <Link to="/dashboard" className="w-[106px] font-bold hover:text-[#3B71FE] text-[#232323]">Dashboard</Link>
+          )}
           <p>NGN</p>
           <button className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
             <LucideShoppingBasket size={24} />
           </button>
-          <button className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
+          <button onClick={openProfile} className="w-10 h-10 flex items-center justify-center rounded-[40px] border-[#DEDEDE] shadow-custom2">
             <User2Icon size={24} />
           </button>
         </div>

@@ -48,6 +48,14 @@ export interface IImage {
     api_key: string;
 }
   
+
+export interface IBooking {
+    checkin: string; // ISO date string
+    checkout: string; // ISO date string
+    guests: number; // Number of guests
+    _id: string; // Unique identifier for the booking
+    date: string; // ISO date string for when the booking was created
+}
 export interface IProperty {
     _id: string;
     created_by: IUser;
@@ -71,7 +79,7 @@ export interface IProperty {
     createdAt: string;
     updatedAt: string;
     __v: number;
-    bookings: [];
+    bookings: IBooking[];
 }
   
 

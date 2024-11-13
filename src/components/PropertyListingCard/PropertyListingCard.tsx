@@ -42,11 +42,13 @@ const PropertyListingCard = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative w-full h-[341px] flex items-center justify-between">
-        <img
-          src={images[currentImageIndex].secure_url}
-          alt={`Property ${currentImageIndex + 1}`}
-          className="object-cover w-full h-full"
-        />
+        <Link to={`/property/${id}`} className='w-full h-full'> 
+          <img
+            src={images[currentImageIndex].secure_url}
+            alt={`Property ${currentImageIndex + 1}`}
+            className="object-cover w-full h-[341px]"
+          />
+        </Link>
 
         <button
           onClick={handlePrevClick}

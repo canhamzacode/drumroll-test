@@ -13,6 +13,8 @@ interface IPropertyContext {
     createProperty: (data: FormData) => Promise<void>;
     initializePayment: (charge: number, booking: IProperty) => Promise<void>;
     initializingPayment: boolean;
+    deleteProperty: (id: string) => Promise<void>;
+    editProperty: (id: string, data: FormData)  => Promise<void>;
 }
 
 interface IProps {
@@ -101,12 +103,52 @@ const PropertyContextProvider = ({ children }: IProps) => {
             });
             setLoading(false);
             Toast("success", res.data.msg);
+            getAllProperties();
         } catch (error) {
             Toast("error", "Failed to create property");
             setLoading(false);
             console.error("Error:", error);
         }
     };
+
+    const editProperty = async (id: string, data: FormData) => {
+        console.log(token);
+        setLoading(true);
+        try {
+            const res = await axios.post(`/property/update/one/${id}`, data, {
+                headers: {
+                    "heri-auth-token": token,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            setLoading(false);
+            Toast("success", res.data.msg);
+            getAllProperties();
+        } catch (error) {
+            Toast("error", "Failed to edit property");
+            setLoading(false);
+            console.error("Error:", error);
+        }
+    };
+
+    const deleteProperty = async (id: string) => {
+        setLoading(true);
+        try {
+            const res = await axios.post(`/property/delete/one/${id}`, {
+                headers: {
+                    "heri-auth-token": token,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            setLoading(false);
+            Toast("success", res.data.msg);
+            getAllProperties();
+        } catch (error) {
+            console.log(error);
+            Toast("error", "Failed to delete property");
+            setLoading(false);
+        }
+    }
 
     return (
         <PropertyContext.Provider value={{ 
@@ -117,7 +159,9 @@ const PropertyContextProvider = ({ children }: IProps) => {
             getSingleProperty,
             getAllProperties,
             createProperty,
-            initializePayment
+            initializePayment,
+            editProperty,
+            deleteProperty
         }}>
             {children}
         </PropertyContext.Provider>
