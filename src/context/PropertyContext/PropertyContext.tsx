@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { IProperty } from "../../types";
+import { IProperty, IPropertyFilter } from "../../types";
 import axios from "axios";
 import { Toast } from "../../components/Toast";
 import { useAuthState } from "../AuthContext";
@@ -15,6 +15,7 @@ interface IPropertyContext {
     initializingPayment: boolean;
     deleteProperty: (id: string) => Promise<void>;
     editProperty: (id: string, data: FormData)  => Promise<void>;
+    searchProperties: (data: IPropertyFilter) => Promise<void>;
 }
 
 interface IProps {
@@ -43,6 +44,28 @@ const PropertyContextProvider = ({ children }: IProps) => {
         try {
             const res = await axios.get("/property/all");
             setProperties(res.data.data.property);
+            console.log(res.data.data);
+        } catch (error) {
+            console.log(error);
+            Toast("error", "Failed to fetch properties");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const searchProperties = async (data: IPropertyFilter) => {
+        setLoading(true);
+        try {
+            const { location, checkin, checkout, guests } = data;
+            const queryParams = new URLSearchParams({
+                location,
+                checkin: checkin.toString(),
+                checkout: checkout.toString(),
+                guests: guests.toString(),
+            }).toString();
+    
+            const res = await axios.get(`/auth/search?${queryParams}`);
+            setProperties(res.data.data.properties);
             console.log(res.data.data);
         } catch (error) {
             console.log(error);
@@ -161,7 +184,8 @@ const PropertyContextProvider = ({ children }: IProps) => {
             createProperty,
             initializePayment,
             editProperty,
-            deleteProperty
+            deleteProperty,
+            searchProperties
         }}>
             {children}
         </PropertyContext.Provider>

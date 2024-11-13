@@ -97,3 +97,10 @@ export interface ICreatePropertyInput {
     maximumNights: number;         // Maximum nights allowed (changed to number)
     amenities: string;            // Single string for amenities, comma-separated
 }
+
+export interface IPropertyFilter {
+    location: string;
+    checkin: string | number;
+    checkout: string | number;
+    guests: number;
+}
