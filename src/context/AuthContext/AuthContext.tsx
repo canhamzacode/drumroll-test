@@ -39,7 +39,7 @@ const AuthContextProvider = ({ children }: IProps) => {
   const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const [user, setUser] = useState<IUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 

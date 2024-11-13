@@ -47,7 +47,7 @@ const PropertyListing = () => {
 
 
   const handleSearch = () => {
-    if (!filters.location || !filters.checkin || !filters.checkout || !filters.guests) {
+    if (!filters.location || !filters.guests) {
       Toast("error", "Please fill all fields");
       return;
     }

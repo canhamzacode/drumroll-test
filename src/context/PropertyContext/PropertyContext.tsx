@@ -60,11 +60,9 @@ const PropertyContextProvider = ({ children }: IProps) => {
     const searchProperties = async (data: IPropertyFilter) => {
         setLoading(true);
         try {
-            const { location, checkin, checkout, guests } = data;
+            const { location, guests } = data;
             const queryParams = new URLSearchParams({
                 location,
-                checkin: checkin.toString(),
-                checkout: checkout.toString(),
                 guests: guests.toString(),
             }).toString();
     

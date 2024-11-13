@@ -6,8 +6,6 @@ const Home = () => {
 
   return (
     <div>
-      {/* <button onClick={() => scrollToSection("aboutRef")}>Go to About</button>
-      <button onClick={() => scrollToSection("contactRef")}>Go to Contact</button> */}
       <div>
         <Hero />
       </div>

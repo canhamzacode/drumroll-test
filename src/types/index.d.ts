@@ -100,8 +100,8 @@ export interface ICreatePropertyInput {
 
 export interface IPropertyFilter {
     location: string;
-    checkin: string | number;
-    checkout: string | number;
+    checkin?: string | number;
+    checkout?: string | number;
     guests: number;
 }
 
