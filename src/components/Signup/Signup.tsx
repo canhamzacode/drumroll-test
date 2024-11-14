@@ -22,8 +22,7 @@ const Signup = ({closeModal}: ISignupProps) => {
         onSubmit={(values) => handleSubmit(values)}
         validationSchema={SignupSchema}
     >
-        {({setFieldValue, errors})=>{
-            console.log(errors) 
+        {({setFieldValue})=>{
         return (
             <Form className=''>
             <h3 className="text-2xl mb-5">Create an account</h3>

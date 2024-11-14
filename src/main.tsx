@@ -13,15 +13,15 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthContextProvider>
-        <SocketContextProvider>
           <PropertyContextProvider>
-            <ModalProvider>
-              <SectionProvider>
+            <SocketContextProvider>
+              <ModalProvider>
+                <SectionProvider>
                   <App />
-              </SectionProvider>
-            </ModalProvider>
+                </SectionProvider>
+              </ModalProvider>
+            </SocketContextProvider>
           </PropertyContextProvider>
-        </SocketContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
   </StrictMode>,

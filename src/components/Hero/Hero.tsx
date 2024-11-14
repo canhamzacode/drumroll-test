@@ -4,8 +4,8 @@ import { TextInput } from "../Input";
 import { User2 } from "lucide-react";
 
 const Hero = () => {
-    const onSubmit = (values: unknown) => {
-        console.log(values);
+    const onSubmit = () => {
+        // console.log(values);
     }
   return (
     <div className="hero-bg px-5 relative">

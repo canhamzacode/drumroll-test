@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
 import { IBooking, IProperty, IPropertyFilter, IPropertySummary } from "../../types";
 import axios from "axios";
 import { Toast } from "../../components/Toast";
@@ -10,6 +10,7 @@ interface IPropertyContext {
     loading: boolean;
     getAllProperties: () => Promise<void>;
     properties: IProperty [];
+    setProperties: Dispatch<SetStateAction<IProperty []>>;
     getSingleProperty: (id: string) => Promise<void>;
     property: IProperty | null;
     createProperty: (data: FormData) => Promise<void>;
@@ -53,9 +54,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
         try {
             const res = await axios.get("/property/all");
             setProperties(res.data.data.property);
-            console.log(res.data.data);
-        } catch (error) {
-            console.log(error);
+        } catch {
             Toast("error", "Failed to fetch properties");
         } finally {
             setLoading(false);
@@ -73,9 +72,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
     
             const res = await axios.get(`/auth/search?${queryParams}`);
             setProperties(res.data.data.properties);
-            console.log(res.data.data);
-        } catch (error) {
-            console.log(error);
+        } catch {
             Toast("error", "Failed to fetch properties");
         } finally {
             setLoading(false);
@@ -87,10 +84,8 @@ const PropertyContextProvider = ({ children }: IProps) => {
         try {
             const res = await axios.get(`/property/one/${id}`);
             setProperty(res.data.data);
-            console.log(res.data.data);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            console.log(error);
             Toast("error", error.data.msg || error.data.message || "Failed to fetch properties");
         } finally {
             setLoading(false);
@@ -106,9 +101,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
                 },
             });
             setSummary(res.data.data);
-            console.log(res.data.data);
-        } catch (error) {
-            console.log(error);
+        } catch {
             Toast("error", "Failed to fetch properties");
         } finally {
             setLoading(false);
@@ -125,13 +118,11 @@ const PropertyContextProvider = ({ children }: IProps) => {
             );
     
             const authorizationUrl = res.data.data.data.authorization_url;
-            console.log(authorizationUrl);
             Toast("success", res.data.msg);
     
             // Open this URL in a new tab
             window.open(authorizationUrl, '_blank');
-        } catch (error) {
-            console.error("Payment Initialization Error:", error);
+        } catch {
             Toast("error", "Failed to initialize payment. Please try again.");
         } finally {
             setInitializingPayment(false);
@@ -139,7 +130,6 @@ const PropertyContextProvider = ({ children }: IProps) => {
     };
 
     const createProperty = async (data: FormData) => {
-        console.log(token);
         setLoading(true);
         try {
             const res = await axios.post("/property/add", data, {
@@ -150,16 +140,17 @@ const PropertyContextProvider = ({ children }: IProps) => {
             });
             setLoading(false);
             Toast("success", res.data.msg);
-            getAllProperties();
-        } catch (error) {
+            const newProperty = res.data.data;
+            getAllSummary();
+            setProperties((prev) => [newProperty, ...prev]);
+            socketInstance.emit("propertyAdded", data);
+        } catch {
             Toast("error", "Failed to create property");
             setLoading(false);
-            console.error("Error:", error);
         }
     };
 
     const editProperty = async (id: string, data: FormData) => {
-        console.log(token);
         setLoading(true);
         try {
             const res = await axios.put(`/property/update/one/${id}`, data, {
@@ -170,12 +161,15 @@ const PropertyContextProvider = ({ children }: IProps) => {
             });
             setLoading(false);
             Toast("success", res.data.msg);
-            socketInstance.emit("propertyUpdated", data);
+            // const updatedProperty = res.data.data;
+            // setProperties((prev) => 
+            //     prev.map((prop) => (prop._id === updatedProperty.id ? updatedProperty : prop))
+            // );
             getAllProperties();
-        } catch (error) {
+            socketInstance.emit("propertyUpdated", data);
+        } catch {
             Toast("error", "Failed to edit property");
             setLoading(false);
-            console.error("Error:", error);
         }
     };
 
@@ -190,10 +184,12 @@ const PropertyContextProvider = ({ children }: IProps) => {
             });
             setLoading(false);
             Toast("success", res.data.msg);
-            getAllProperties();
-        } catch (error) {
-            console.log(error);
-            Toast("error", "Failed to delete property");
+            setProperties((prev) => prev.filter((prop) => prop._id !== id));
+            socketInstance.emit("propertyDeleted", {
+                message: "Property deleted",
+            });
+        } catch {
+            Toast("error", `Failed to delete property`);
             setLoading(false);
         }
     }
@@ -207,9 +203,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
                     },
                 });
                 setBookings(res.data.data);
-                console.log(res.data.data);
-            } catch (error) {
-                console.log(error);
+            } catch {
                 Toast("error", "Failed to fetch bookings");
             } finally {
                 setLoading(false);
@@ -232,7 +226,8 @@ const PropertyContextProvider = ({ children }: IProps) => {
             deleteProperty,
             searchProperties,
             getAllSummary,
-            getAllBookings
+            getAllBookings,
+            setProperties
         }}>
             {children}
         </PropertyContext.Provider>

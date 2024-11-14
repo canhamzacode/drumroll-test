@@ -51,7 +51,7 @@ const Dashboard = () => {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
-            render: (text: string) => <div>{text.slice(0, 30)}...</div>,
+            render: (text: string) => <div>{text?.slice(0, 30)}...</div>,
         },
         {
             title: 'Price',

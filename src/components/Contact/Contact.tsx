@@ -28,8 +28,8 @@ const socials = [
 ];
 
 const Contact = () => {
-  const onSubmit = (values: unknown) => {
-    console.log(values);
+  const onSubmit = () => {
+    // console.log(values);
   };
 
   return (

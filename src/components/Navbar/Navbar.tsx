@@ -27,9 +27,11 @@ const Navbar = ({ openAuth }: INavbarProps) => {
 
   return (
     <div className="w-full max-w-[1366px] px-5 mx-auto h-[91px] flex items-center justify-between">
-      <div className="md:h-[58px] md:w-[201px] h-[26px] w-[100px]">
-        <img src={logo} alt="logo" />
-      </div>
+      <Link to="/">
+        <div className="md:h-[58px] md:w-[201px] h-[26px] w-[100px]">
+          <img src={logo} alt="logo" />
+        </div>
+      </Link>
 
       <div className="hidden md:flex gap-2 text-center">
         <Link
@@ -105,7 +107,7 @@ const Navbar = ({ openAuth }: INavbarProps) => {
         <div className="flex flex-col items-center gap-6 mt-10 text-[#232323] font-bold">
           <Link
             to="/"
-            className={`w-[106px] font-bold ${
+            className={`w-[106px] text-center font-bold ${
               isActiveRoute("/") ? "text-[#3B71FE]" : "text-[#232323] hover:text-[#3B71FE]"
             }`}
           >

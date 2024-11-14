@@ -32,7 +32,6 @@ export const useAuthState = () => {
   return state;
 };
 
-// Set the base URL for all Axios requests
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const AuthContextProvider = ({ children }: IProps) => {
@@ -90,8 +89,8 @@ const AuthContextProvider = ({ children }: IProps) => {
       });
       setUser(res.data.data.user);
       setIsAuthenticated(true);
-    } catch (err: any) {
-      console.error("Auth check failed:", err);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_err: any) {
       setIsAuthenticated(false);
       setError("Failed to authenticate. Please log in again.");
     } finally {
@@ -101,13 +100,7 @@ const AuthContextProvider = ({ children }: IProps) => {
   };
 
   const googleAuth = async () => {
-    try {
-      const res = await axios.get("auth/google");
-      console.log(res);
-      // window.open(`${import.meta.env.BASE_URL}/google/callback`)
-    } catch (error) {
-      console.log(error)
-    }
+    await axios.get("auth/google");
   }
 
   const logout = () => {

@@ -18,7 +18,6 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
     const [lastCheckout, setLastCheckout] = useState<string | null>(null);
     const [existingImages, setExistingImages] = useState<string[]>([]);
 
-    console.log(data)
     useEffect(() => {
         if (data) {
             // Set initial values for dates
@@ -39,7 +38,6 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
     };
 
     const handleSubmit = async (values: ICreatePropertyInput) => {
-        console.log("Form Values:", values);
 
         const formData = new FormData();
         Object.keys(values).forEach(key => {
@@ -53,8 +51,6 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
                 formData.append(typedKey, String(values[typedKey]));
             }
         });
-
-        console.log("FormData Content:", [...formData]);
 
         if (data) {
             await editProperty(data._id, formData);
@@ -86,8 +82,7 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
             onSubmit={handleSubmit}
             validationSchema={createPropertySchema}
         >
-            {({ setFieldValue, errors }) => {
-                console.log(errors);
+            {({ setFieldValue }) => {
                 return (
                     <Form className=''>
                         <div className="grid gap-4">
