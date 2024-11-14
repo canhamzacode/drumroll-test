@@ -238,13 +238,17 @@ const CreateProperty = ({ data, closeModal }: ICreateProp) => {
                             <Field
                                 name="amenities"
                                 placeholder="Amenities (comma separated)"
-                                label="Amenities" // Fixed typo from "Amenitied" to "Amenities"
+                                label="Amenities"
                                 as={TextInput}
                                 customStyle="placeholder:text-black text-black opacity-60"
                                 containerClass="bg-black/5 border-black/50 text-black"
                             />
                             <button disabled={loading} type='submit' className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] rounded-2xl text-white">
-                                {loading ? <Loader2 /> : "Create Property"}
+                            {loading ? (
+                                <Loader2 />
+                            ) : (
+                                data ? "Edit Property" : "Create Property"
+                            )}
                             </button>
                         </div>
                     </Form>

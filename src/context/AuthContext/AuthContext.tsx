@@ -102,8 +102,9 @@ const AuthContextProvider = ({ children }: IProps) => {
 
   const googleAuth = async () => {
     try {
-      // const res = await axios.get("auth/google");
-      window.open(`${import.meta.env.BASE_URL}/google/callback`)
+      const res = await axios.get("auth/google");
+      console.log(res);
+      // window.open(`${import.meta.env.BASE_URL}/google/callback`)
     } catch (error) {
       console.log(error)
     }

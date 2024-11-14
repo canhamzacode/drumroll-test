@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import { Dashboard, Home, ProductDetail } from "./pages";
+import { Booking, Dashboard, Home, ProductDetail } from "./pages";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppLayout } from "./components/Layout";
 import { useAuthState } from "./context/AuthContext/AuthContext";
-import ProtectedRoute from "./routes/ProtectedRoutes";
+import ProtectedRoute, { RegularUserProtectedRoute } from "./routes/ProtectedRoutes";
 // import ProtectedRoute from "./routes/ProtectedRoutes";
 
 
@@ -26,6 +26,11 @@ function App() {
           <ProtectedRoute>
           <Dashboard />
           </ProtectedRoute>
+        </AppLayout>} />
+        <Route path="/booking" element={<AppLayout>
+          <RegularUserProtectedRoute>
+           <Booking /> 
+          </RegularUserProtectedRoute>
         </AppLayout>} />
       </Routes>
     </>

@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Contact } from "../Contact";
 import { Footer } from "../Footer";
 import { Navbar } from "../Navbar";
@@ -8,8 +8,10 @@ import Profile from "../Profile/Profile";
 import { Signup } from "../Signup";
 import { Signin } from "../Signin";
 import { X } from "lucide-react";
+import { useSocketState } from "../../context/SocketContext/SocketContext";
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
+  const {socket} = useSocketState();
   const { setModal , modal} = useModal();
   const [authType, setAuthType] = useState<"Sign In" | "Sign Up">("Sign In");
   const {user, logout} = useAuthState();
@@ -33,6 +35,19 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
     logout();
     closeModal();
   }
+
+  useEffect(() => {
+    if (socket) {
+        socket.on("propertyUpdateConfirmation", (confirmation) => {
+            console.log("Property update confirmed:", confirmation);
+        });
+    }
+
+    // Clean up the event listener
+    return () => {
+        socket?.off("propertyUpdateConfirmation");
+    };
+}, [socket]);
 
   return (
     <div>

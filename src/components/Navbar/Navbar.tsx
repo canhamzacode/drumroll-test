@@ -31,7 +31,7 @@ const Navbar = ({ openAuth }: INavbarProps) => {
         <img src={logo} alt="logo" />
       </div>
 
-      <div className="hidden md:flex gap-2">
+      <div className="hidden md:flex gap-2 text-center">
         <Link
           to="/"
           className={`w-[106px] font-bold ${
@@ -60,6 +60,16 @@ const Navbar = ({ openAuth }: INavbarProps) => {
             }`}
           >
             Dashboard
+          </Link>
+        )}
+        {user && (
+          <Link
+            to="/booking"
+            className={`w-[106px] font-bold ${
+              isActiveRoute("/booking") ? "text-[#3B71FE]" : "text-[#232323] hover:text-[#3B71FE]"
+            }`}
+          >
+            Booking
           </Link>
         )}
       </div>

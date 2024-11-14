@@ -1,8 +1,10 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { IProperty, IPropertyFilter, IPropertySummary } from "../../types";
+import { IBooking, IProperty, IPropertyFilter, IPropertySummary } from "../../types";
 import axios from "axios";
 import { Toast } from "../../components/Toast";
 import { useAuthState } from "../AuthContext";
+import { socketInstance } from "../../utils/socket";
+
 
 interface IPropertyContext {
     loading: boolean;
@@ -17,7 +19,9 @@ interface IPropertyContext {
     editProperty: (id: string, data: FormData)  => Promise<void>;
     searchProperties: (data: IPropertyFilter) => Promise<void>;
     getAllSummary: () => Promise<void>;
+    getAllBookings: () => Promise<void>;
     summary: IPropertySummary | null;
+    booking: IBooking [];
 }
 
 interface IProps {
@@ -42,6 +46,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
     const [property, setProperty] = useState<IProperty | null>(null);
     const [initializingPayment, setInitializingPayment] = useState(false);
     const [summary, setSummary] = useState<IPropertySummary | null>(null);
+    const [booking, setBookings] = useState<IBooking []>([]);
 
     const getAllProperties = async () =>{
         setLoading(true);
@@ -165,6 +170,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
             });
             setLoading(false);
             Toast("success", res.data.msg);
+            socketInstance.emit("propertyUpdated", data);
             getAllProperties();
         } catch (error) {
             Toast("error", "Failed to edit property");
@@ -192,12 +198,32 @@ const PropertyContextProvider = ({ children }: IProps) => {
         }
     }
 
+    const getAllBookings = async () => {
+        setLoading(true);
+            try {
+                const res = await axios.get("/booking/all", {
+                    headers: {
+                        "heri-auth-token": token,
+                    },
+                });
+                setBookings(res.data.data);
+                console.log(res.data.data);
+            } catch (error) {
+                console.log(error);
+                Toast("error", "Failed to fetch bookings");
+            } finally {
+                setLoading(false);
+        }
+    }
+
     return (
         <PropertyContext.Provider value={{ 
             loading,
             property,
             initializingPayment,
             properties,
+            summary,
+            booking,
             getSingleProperty,
             getAllProperties,
             createProperty,
@@ -206,7 +232,7 @@ const PropertyContextProvider = ({ children }: IProps) => {
             deleteProperty,
             searchProperties,
             getAllSummary,
-            summary
+            getAllBookings
         }}>
             {children}
         </PropertyContext.Provider>
