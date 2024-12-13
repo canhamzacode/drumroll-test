@@ -9,20 +9,23 @@ interface ISignupProps {
 }
 
 const Signup = ({closeModal}: ISignupProps) => {
-    const {signup} = useAuthState();
+    const {signup, loading} = useAuthState();
 
     const handleSubmit = (values: ISignUpInput) => {
-        signup(values).then(()=>{
+        const { policy, ...payload } = values;
+        console.log(policy)
+        signup(payload).then(() => {
             closeModal();
         });
     }
   return (
     <Formik 
-        initialValues={{ email: "", password: "", username: "", fullname: ""}}
+        initialValues={{ email: "", password: "", username: "", fullname: "", policy: false }}
         onSubmit={(values) => handleSubmit(values)}
         validationSchema={SignupSchema}
     >
-        {({setFieldValue})=>{
+        {({setFieldValue, values, errors})=>{
+            console.log(errors)
         return (
             <Form className=''>
             <h3 className="text-2xl mb-5">Create an account</h3>
@@ -57,15 +60,20 @@ const Signup = ({closeModal}: ISignupProps) => {
                 customStyle="placeholder:text-black text-black opacity-60"
                 containerClass="bg-black/5 border-black/50 text-black"
                 />
-                <button type='submit' className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] rounded-2xl text-white">
-                Register
-                </button>
                 <div className="flex gap-2 items-center">
-                <input type="checkbox" name="policy" id="policy" onClick={(e)=> {
-                    setFieldValue("policy", e.bubbles);
-                }} />
-                <p>i confirm that i have read and accepted the <span className="text-[#3B71FE]">privacy policy</span></p>
+                    <Field
+                        type="checkbox"
+                        name="policy"
+                        checked={values.policy}
+                        value={values.policy}
+                        onChange={() => setFieldValue("policy", !values.policy)}
+                    />
+                    <p>i confirm that i have read and accepted the <span className="text-[#3B71FE]">privacy policy</span></p>
                 </div>
+                {errors.policy && <p className="text-red-500 text-sm">{errors.policy}</p>}
+                <button disabled={loading} type='submit' className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] rounded-2xl text-white">
+                    {loading ? "Loading..." : "Sign up"}
+                </button>
             </div>
             </Form>
         )

@@ -1,21 +1,53 @@
+import { useState } from "react";
 import { ArrowLeft, Link, Snowflake, Star, Wifi } from "lucide-react";
 import noTask from "../assets/noTask.png";
 import { useNavigate, useParams } from "react-router-dom";
-import { usePropertyState } from "../context";
+import { useAuthState, usePropertyState } from "../context";
 import { useEffect } from "react";
 import { FaAirFreshener, FaBasketballBall, FaCut, FaDumbbell } from "react-icons/fa";
 import { MdKitchen } from "react-icons/md";
+import { IProperty } from "../types";
+import { Toast } from "../components/Toast";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const {isAuthenticated} = useAuthState();
   const { getSingleProperty, loading, property, initializePayment, initializingPayment } = usePropertyState();
   const navigate = useNavigate();
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
     if (id) {
       getSingleProperty(id);
     }
   }, [id]);
+
+  useEffect(() => {
+    if (checkInDate && checkOutDate) {
+      const checkIn = new Date(checkInDate);
+      const checkOut = new Date(checkOutDate);
+      const nights = (Number(checkOut) - Number(checkIn)) / (1000 * 60 * 60 * 24);
+      if (nights > 0 && property) {
+        const serviceFee = property.price * 0.05;
+        const subtotal = property.price * nights + serviceFee;
+        const vat = subtotal * 0.05;
+        const total = subtotal + vat;
+        setTotalPrice(total);
+      } else {
+        setTotalPrice(0);
+      }
+    }
+  }, [checkInDate, checkOutDate, property]);
+
+  const handleBooking = () => {
+    if (!isAuthenticated) {
+      Toast("error", "You need to login to book this property");
+      return;
+    }
+    initializePayment(totalPrice, property as IProperty);
+  }
 
   const amenityIcons: { [key: string]: JSX.Element } = {
     Wifi: <Wifi aria-label="WiFi" />,
@@ -28,11 +60,6 @@ const ProductDetail = () => {
   };
 
   const formatPrice = (price: number) => price.toLocaleString("en-NG", { style: "currency", currency: "NGN" });
-
-  const serviceFee = property?.price ? property.price * 0.05 : 0;
-  const subtotal = property?.price ? property.price + serviceFee : 0;
-  const vat = subtotal * 0.05;
-  const total = subtotal + vat;
 
   if (loading || !property) return <div>Loading...</div>;
 
@@ -118,17 +145,23 @@ const ProductDetail = () => {
               {["Check-in", "Check-out"].map((label, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <p className="text-[#475467]">{label}</p>
-                  <input type="date" className="text-[#475467] border border-gray-300 rounded px-2 py-1" />
+                  <input
+                    type="date"
+                    className="text-[#475467] border border-gray-300 rounded px-2 py-1"
+                    value={label === "Check-in" ? checkInDate : checkOutDate}
+                    onChange={(e) => label === "Check-in" ? setCheckInDate(e.target.value) : setCheckOutDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                  />
                 </div>
               ))}
             </div>
             <div className="flex flex-col gap-2">
               {[
-                { label: `${formatPrice(property.price)} x 1 night`, amount: formatPrice(property.price) },
-                { label: "Service Fee", amount: formatPrice(serviceFee) },
-                { label: "VAT", amount: formatPrice(vat) },
-                { label: "Subtotal", amount: formatPrice(subtotal) },
-                { label: "Total", amount: formatPrice(total) }
+                { label: `${formatPrice(property.price)} x ${checkInDate && checkOutDate ? ((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)) : 1} night(s)`, amount: formatPrice(checkInDate && checkOutDate ? property.price * ((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)) : property.price) },
+                { label: "Service Fee", amount: formatPrice(property.price * 0.05) },
+                { label: "VAT", amount: formatPrice((property.price + property.price * 0.05) * 0.05) },
+                { label: "Subtotal", amount: formatPrice(property.price + property.price * 0.05) },
+                { label: "Total", amount: formatPrice(totalPrice) }
               ].map((item, i) => (
                 <div key={i} className="flex justify-between">
                   <p className="text-[#101828]">{item.label}</p>
@@ -136,9 +169,7 @@ const ProductDetail = () => {
                 </div>
               ))}
             </div>
-            <button disabled={initializingPayment} type="button" onClick={()=>{
-              initializePayment(total, property)
-            }} className="w-full h-[44px] bg-[#EF5E17] text-white">
+            <button disabled={initializingPayment} type="button" onClick={handleBooking} className="w-full h-[44px] bg-[#EF5E17] text-white">
               {initializingPayment ? "Requesting to Book...": "Request to Book"}
             </button>
           </div>
@@ -149,7 +180,7 @@ const ProductDetail = () => {
         <h3 className="text-[#101828] text-2xl font-semibold">Meet the host</h3>
         <div className="w-full flex gap-3 items-center mt-3">
           <div className="h-[56px] w-[56px] rounded-full bg-gray-400 text-3xl flex items-center justify-center">
-            {property.created_by.fullname[0]}
+            {property.created_by.fullname.charAt(0)}
           </div>
           <p className="text-[#101828] font-medium">{property.created_by.fullname}</p>
         </div>

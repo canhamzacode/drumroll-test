@@ -5,11 +5,13 @@ export const SignupSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
   password: Yup.string().required('Required').min(6, 'Password must be at least 6 characters'),
   fullname: Yup.string().required('Required'),
+  policy: Yup.boolean().oneOf([true], 'You must accept the privacy policy')
 });
 
 export const SigninSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
   password: Yup.string().required('Required').min(6, 'Password must be at least 6 characters'),
+  policy: Yup.boolean().oneOf([true], 'You must accept the privacy policy')
 });
 
 export const createPropertySchema = Yup.object().shape({

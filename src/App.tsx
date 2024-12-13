@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Booking, Dashboard, Home, ProductDetail } from "./pages";
+import { Booking, Dashboard, Home, Payment, ProductDetail } from "./pages";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppLayout } from "./components/Layout";
@@ -22,6 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<AppLayout><Home /></AppLayout>} />
         <Route path="/property/:id" element={<AppLayout><ProductDetail /></AppLayout>} />
+        <Route path="/confirm-payment/:id" element={<AppLayout><Payment /></AppLayout>} />
         <Route path="/dashboard/*" element={<AppLayout>
           <ProtectedRoute>
           <Dashboard />

@@ -25,6 +25,7 @@ const SocketContextProvider = ({ children }: { children: React.ReactNode }) => {
 
         // Socket connection error event
         socketInstance.on('connect_error', (error) => {
+            console.log('Socket connection error:', error);
             Toast('error', `Failed to connect to WebSocket server ${error}`);
         });
 

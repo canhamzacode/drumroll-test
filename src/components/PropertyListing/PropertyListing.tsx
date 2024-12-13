@@ -128,6 +128,9 @@ const PropertyListing = () => {
             />
           ))}
         </div>
+        {properties.length === 0 && (
+          <div className="w-full flex items-center justify-center h-10 mt-5">No properties found <button onClick={()=> getAllProperties()} className="text-[#FE6A00] underline ml-3"> reset</button></div>
+        )}
       </div>
     </div>
   );

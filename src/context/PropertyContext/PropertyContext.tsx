@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
 import { IBooking, IProperty, IPropertyFilter, IPropertySummary } from "../../types";
 import axios from "axios";
@@ -68,12 +69,14 @@ const PropertyContextProvider = ({ children }: IProps) => {
             const queryParams = new URLSearchParams({
                 location,
                 guests: guests.toString(),
+                checkin: data.checkin ? data.checkin.toString() : "",
+                checkout: data.checkout ? data.checkout.toString() : "",
             }).toString();
     
             const res = await axios.get(`/auth/search?${queryParams}`);
             setProperties(res.data.data.properties);
-        } catch {
-            Toast("error", "Failed to fetch properties");
+        } catch (err: any) {
+            Toast("error",  err?.data?.msg || err?.data?.message || "Failed to fetch properties");
         } finally {
             setLoading(false);
         }
@@ -84,9 +87,8 @@ const PropertyContextProvider = ({ children }: IProps) => {
         try {
             const res = await axios.get(`/property/one/${id}`);
             setProperty(res.data.data);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            Toast("error", error.data.msg || error.data.message || "Failed to fetch properties");
+        } catch (err: any) {
+            Toast("error", err?.data?.msg || err?.data?.message || "Failed to fetch properties");
         } finally {
             setLoading(false);
         }
@@ -101,8 +103,8 @@ const PropertyContextProvider = ({ children }: IProps) => {
                 },
             });
             setSummary(res.data.data);
-        } catch {
-            Toast("error", "Failed to fetch properties");
+        } catch (err: any) {
+            Toast("error", err?.data?.msg || err?.data?.message  || "Failed to fetch properties");
         } finally {
             setLoading(false);
         }
@@ -118,12 +120,13 @@ const PropertyContextProvider = ({ children }: IProps) => {
             );
     
             const authorizationUrl = res.data.data.data.authorization_url;
-            Toast("success", res.data.msg);
+            Toast("success", res?.data?.msg);
     
             // Open this URL in a new tab
             window.open(authorizationUrl, '_blank');
-        } catch {
-            Toast("error", "Failed to initialize payment. Please try again.");
+        } catch (err: any) {
+            console.log(err)
+            Toast("error",  err?.response?.data?.msg || err?.response?.data?.message || "Failed to initialize payment. Please try again.");
         } finally {
             setInitializingPayment(false);
         }
@@ -139,13 +142,13 @@ const PropertyContextProvider = ({ children }: IProps) => {
                 },
             });
             setLoading(false);
-            Toast("success", res.data.msg);
+            Toast("success", res?.data?.msg);
             const newProperty = res.data.data;
             getAllSummary();
             setProperties((prev) => [newProperty, ...prev]);
             socketInstance.emit("propertyAdded", data);
-        } catch {
-            Toast("error", "Failed to create property");
+        } catch (err: any) {
+            Toast("error", err?.data?.msg || err?.data?.message || "Failed to create property");
             setLoading(false);
         }
     };
@@ -167,8 +170,8 @@ const PropertyContextProvider = ({ children }: IProps) => {
             // );
             getAllProperties();
             socketInstance.emit("propertyUpdated", data);
-        } catch {
-            Toast("error", "Failed to edit property");
+        } catch (err: any)  {
+            Toast("error", err?.data?.msg || err?.data?.message   || "Failed to edit property");
             setLoading(false);
         }
     };
@@ -188,25 +191,25 @@ const PropertyContextProvider = ({ children }: IProps) => {
             socketInstance.emit("propertyDeleted", {
                 message: "Property deleted",
             });
-        } catch {
-            Toast("error", `Failed to delete property`);
+        } catch (err: any) {
+            Toast("error",  err?.data?.msg || err?.data?.message  || `Failed to delete property`);
             setLoading(false);
         }
     }
 
     const getAllBookings = async () => {
         setLoading(true);
-            try {
-                const res = await axios.get("/booking/all", {
-                    headers: {
-                        "heri-auth-token": token,
-                    },
-                });
-                setBookings(res.data.data);
-            } catch {
-                Toast("error", "Failed to fetch bookings");
-            } finally {
-                setLoading(false);
+        try {
+            const res = await axios.get("/booking/all", {
+                headers: {
+                    "heri-auth-token": token,
+                },
+            });
+            setBookings(res.data.data);
+        } catch (err: any) {
+            Toast("error",  err.response?.data?.message || "Failed to fetch bookings");
+        } finally {
+            setLoading(false);
         }
     }
 

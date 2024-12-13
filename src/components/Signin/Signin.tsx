@@ -44,16 +44,16 @@ const Signin = ({closeModal}: ISignInProps) => {
                     customStyle="placeholder:text-black text-black opacity-60"
                     containerClass="bg-black/5 border-black/50 text-black"
                     />
+                    <div className="flex gap-2 items-center justify-between">
+                        <div className="flex gap-3">
+                            <input type="checkbox" />
+                            <p>Remember me</p>
+                        </div>
+                        <p className="underline">Forgot Password?</p>
+                    </div>
                     <button disabled={loading} type='submit' className="w-full max-w-[380px] h-[54px] bg-[#3B71FE] flex items-center justify-center rounded-2xl text-white">
                     {loading ? <Loader className='mx-auto' /> : "Sign in"}
                     </button>
-                    <div className="flex gap-2 items-center justify-between">
-                    <div className="flex gap-3">
-                        <input type="checkbox" />
-                        <p>Remember me</p>
-                    </div>
-                    <p className="underline">Forgot Password?</p>
-                    </div>
                 </div>
                 </Form>
             )

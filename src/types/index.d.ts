@@ -3,6 +3,7 @@ export interface ISignUpInput {
     password: string;
     fullname: string;
     username: string;
+    policy?: boolean;
 }
 
 export interface ILoginInput {
