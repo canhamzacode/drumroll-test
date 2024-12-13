@@ -22,7 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<AppLayout><Home /></AppLayout>} />
         <Route path="/property/:id" element={<AppLayout><ProductDetail /></AppLayout>} />
-        <Route path="/confirm-payment/:id" element={<AppLayout><Payment /></AppLayout>} />
+        <Route path="/confirm-payment" element={<AppLayout><Payment /></AppLayout>} />
         <Route path="/dashboard/*" element={<AppLayout>
           <ProtectedRoute>
           <Dashboard />
