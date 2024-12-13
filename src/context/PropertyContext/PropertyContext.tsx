@@ -24,6 +24,7 @@ interface IPropertyContext {
     getAllBookings: () => Promise<void>;
     summary: IPropertySummary | null;
     booking: IBooking [];
+    confirmPayment: (id: string) => Promise<any>;
 }
 
 interface IProps {
@@ -213,6 +214,25 @@ const PropertyContextProvider = ({ children }: IProps) => {
         }
     }
 
+    const confirmPayment = async (id: string) => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`/payment/transaction/confirmation?reference=${id}`, {
+                headers: {
+                    "heri-auth-token": token,
+                },
+            });
+            Toast("success", res.data.msg);
+            console.log(res.data.data);
+            return res.data.data;
+        } catch (err: any) {
+            console.log(err);
+            Toast("error", err.response?.data?.msg || "Failed to confirm payment");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <PropertyContext.Provider value={{ 
             loading,
@@ -230,7 +250,8 @@ const PropertyContextProvider = ({ children }: IProps) => {
             searchProperties,
             getAllSummary,
             getAllBookings,
-            setProperties
+            setProperties,
+            confirmPayment
         }}>
             {children}
         </PropertyContext.Provider>

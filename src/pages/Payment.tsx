@@ -1,23 +1,33 @@
 import { useState, useEffect } from 'react';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import { GiTireIronCross } from 'react-icons/gi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePropertyState } from '../context';
 
 const Payment = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'failed' | null>(null);
+  const { confirmPayment } = usePropertyState();
+  const urlParams = new URLSearchParams(window.location.search);
+  const [ref, setRef] = useState('');
+  const trxref = urlParams.get('trxref');
 
   useEffect(() => {
-    console.log(`Payment ID: ${id}`);
-    // Simulate API request
-    setTimeout(() => {
-      // Simulate a successful payment response
-      setPaymentStatus('failed');
-      // Uncomment the next line to simulate a failed payment response
-      // setPaymentStatus('failed');
-    }, 1000);
-  }, [id]);
+    const fetchPaymentStatus = async () => {
+      if (trxref) {
+        const data = await confirmPayment(trxref);
+        console.log(data);
+        setRef(trxref);
+        if (data) {
+          setPaymentStatus('success');
+        } else {
+          setPaymentStatus('failed');
+        }
+      }
+    };
+
+    fetchPaymentStatus();
+  }, [trxref]);
 
   const handleHomeClick = () => {
     navigate('/');
@@ -31,7 +41,7 @@ const Payment = () => {
           <div className='w-[100px] h-[100px] rounded-[100px] bg-green-600 text-white flex items-center justify-center'>
             <FaRegCheckSquare size={40} />
           </div>
-          <h2>Payment Successful</h2>
+          <h2>Payment with <span className='underline font-medium'>{ref}</span> Successful</h2>
           <button className='underline' onClick={handleHomeClick}>Go to Home</button>
         </div>
       )}
